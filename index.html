@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arkvolt Cables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: industrial, confident, precise; a factory that shows its work
+   IDEA: the stripped cable sample on a sales counter, every layer cut back to show what is inside
+   PICTURE: a live 3D cutaway cable you drag, hover and open up on scroll; a 3D cable drum that fills as the factory steps advance
+   COLOUR and TYPE: deep petrol ground, copper as the hero colour, sheath red as the sharp accent; Archivo 800 + Inter
+   LAYOUT: full-bleed 3D hero with layer panel, product rail, sizing tool, factory scroller, contact, footer */
+:root{color-scheme:light dark;--bg:light-dark(#f6f6f3,#0b1c22);--ink:light-dark(#12232a,#e9eef0);--mute:light-dark(#53656c,#9db0b6);--card:light-dark(#fff,#11272f);--line:light-dark(#dde3e2,#21404a);--pet:#0d2a33;--pet2:#123843;--cu:#d17a3d;--cu2:#f0a46a;--red:#e0442f}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Archivo,Inter,sans-serif;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h2{font-size:clamp(30px,4vw,46px)}h3{font-size:20px;line-height:1.2}
+p{margin:0}a{color:inherit}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+html{scroll-padding-top:72px;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--cu2);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:999px;border:0;background:var(--cu);color:#fff;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.ghost{background:transparent;border:1.5px solid currentColor}
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(13,42,51,.92);backdrop-filter:blur(10px);color:#fff}
+nav .wrap{display:flex;align-items:center;gap:20px;padding:10px max(5vw,16px);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font:800 20px Archivo,sans-serif;text-decoration:none}
+.logo svg{width:30px;height:30px}
+.links{display:flex;gap:4px;margin-inline-start:auto;flex-wrap:wrap}
+.links a{text-decoration:none;padding:10px 12px;border-radius:8px;color:#cfe0e4;font-size:15px}
+.links a:hover{background:#ffffff14;color:#fff}
+@media(max-width:860px){.links{display:none}nav .btn{margin-inline-start:auto}}
+/* hero */
+.hero{background:radial-gradient(120% 90% at 70% 40%,#174652 0%,var(--pet) 55%,#08191f 100%);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:stretch}
+.hero h1,.hero .lede{position:relative;z-index:1}.hero h1{font-size:clamp(34px,5vw,58px);max-width:15ch}
+.hero .lede{color:#bcd0d5;max-width:52ch;margin-top:14px;font-size:17px}
+.scene{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;aspect-ratio:1440/400;min-height:260px;pointer-events:none;z-index:0;transition:transform .4s ease-out}
+.hero>.wrap{position:relative;z-index:1}
+
+.stage{position:relative;height:min(64vh,580px);min-height:360px;margin-top:-90px;z-index:0;cursor:grab;touch-action:pan-y}
+.stage:active{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.hint{position:absolute;left:0;bottom:-26px;font-size:13px;color:#9fb8be;pointer-events:none}
+.tip{position:absolute;pointer-events:none;background:#fff;color:#12232a;padding:6px 10px;border-radius:8px;font-size:13px;font-weight:600;transform:translate(-50%,-140%);opacity:0;transition:opacity .15s;white-space:nowrap}
+.panel{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px;align-self:center}
+.panel h3{font-size:16px;color:#cfe0e4;font-weight:700}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tabs button{min-height:44px;border-radius:10px;border:1px solid #ffffff26;background:transparent;color:#dbe8eb;cursor:pointer;font-size:14px}
+.tabs button[aria-pressed=true]{background:var(--cu);border-color:var(--cu);color:#fff}
+.lay{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.lay button{width:100%;text-align:start;display:flex;gap:10px;align-items:center;min-height:44px;padding:6px 10px;border-radius:10px;border:0;background:transparent;color:#e7f0f2;cursor:pointer;font-size:15px}
+.lay button:hover,.lay button[aria-pressed=true]{background:#ffffff17}
+.sw{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:inset 0 -2px 0 #0004}
+.info{font-size:14px;color:#bcd0d5;min-height:4.6em}
+.info b{color:#fff;display:block;margin-bottom:2px}
+.hero .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #ffffff22;margin-top:18px}
+.stats div{padding:16px 12px 4px 0}
+.stats strong{font:800 clamp(24px,3vw,34px) Archivo,sans-serif;color:var(--cu2);display:block}
+.stats span{font-size:14px;color:#a9bfc5}
+@media(max-width:900px){.stage{margin-top:0}.hero .wrap{grid-template-columns:minmax(0,1fr)}.panel{align-self:stretch}.hero .stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* products */
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.head p{color:var(--mute);max-width:52ch}
+.prods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:transform .25s,box-shadow .25s}
+.prod:hover{transform:translateY(-4px);box-shadow:0 18px 40px -20px #0d2a3366}
+.prod svg{width:100%;height:110px}
+.prod p{color:var(--mute);font-size:15px;flex:1}
+.prod dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:14px}
+.prod dt{color:var(--mute)}.prod dd{margin:0;font-weight:600;white-space:nowrap}
+.prod .btn{margin-top:6px}
+@media(max-width:1000px){.prods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.prods{grid-template-columns:minmax(0,1fr)}}
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field label{font-weight:600;font-size:15px;display:flex;justify-content:space-between}
+.field output{color:var(--cu);font-weight:700;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--cu);height:32px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;min-height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:15px}
+.seg button[aria-pressed=true]{background:var(--pet);color:#fff;border-color:var(--pet)}
+.res{background:var(--pet);color:#fff;border:0;display:flex;flex-direction:column;gap:14px}
+.big{font:800 clamp(56px,9vw,96px)/1 Archivo,sans-serif;color:var(--cu2)}
+.big small{font-size:.35em;color:#fff;margin-inline-start:6px}
+.rows{display:grid;gap:8px}
+.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #ffffff22;padding-bottom:8px;font-size:15px}
+.row b{white-space:nowrap}
+.meter{height:10px;border-radius:5px;background:#ffffff22;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--cu2);transition:width .3s}
+.note{font-size:13px;color:#a9bfc5}
+@media(max-width:800px){.calc{grid-template-columns:minmax(0,1fr)}}
+/* factory */
+.fact{background:var(--pet);color:#fff}
+.fact .head p{color:#bcd0d5}
+.fgrid{display:grid;grid-template-columns:380px minmax(0,1fr);gap:24px;align-items:center}
+.drum{position:relative;height:380px;cursor:grab;touch-action:pan-y}
+.drum canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.steps{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
+.step{flex:0 0 min(320px,82%);scroll-snap-align:start;background:#ffffff0d;border:1px solid #ffffff1f;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px;transition:background .3s,border-color .3s}
+.step.on{background:#d17a3d22;border-color:var(--cu)}
+.step .n{font:800 15px Archivo,sans-serif;color:var(--cu2)}
+.step p{color:#bcd0d5;font-size:15px}
+.ctrl{display:flex;gap:8px;margin-top:14px;align-items:center}
+.ctrl .btn{background:#ffffff14;min-width:44px;padding:0 16px}
+.ctrl span{color:#a9bfc5;font-size:14px;margin-inline-start:8px}
+@media(max-width:900px){.fgrid{grid-template-columns:minmax(0,1fr)}.drum{height:300px}}
+/* industries */
+.inds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.ind{background:var(--card);padding:22px;display:grid;gap:6px}
+.ind p{color:var(--mute);font-size:15px}
+@media(max-width:800px){.inds{grid-template-columns:minmax(0,1fr)}}
+/* contact */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px}
+.contact .meta{display:grid;gap:14px;align-content:start;color:var(--mute)}
+.contact .meta b{color:var(--ink);display:block}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+form .full{grid-column:1/-1}
+form input,form select,form textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:16px Inter,sans-serif}
+form textarea{min-height:110px;resize:vertical}
+.ok{display:none;background:#e7f4ea;color:#14532d;padding:14px;border-radius:12px}
+@media(max-width:700px){.contact,form{grid-template-columns:minmax(0,1fr)}}
+footer{background:#08191f;color:#a9bfc5;font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#top"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#e0442f"/><circle cx="16" cy="16" r="10.5" fill="#123843"/><circle cx="16" cy="16" r="6" fill="#d17a3d"/><circle cx="16" cy="16" r="2.4" fill="#f0a46a"/></svg>Arkvolt Cables</a>
+  <div class="links"><a href="#products">Products</a><a href="#sizing">Size calculator</a><a href="#factory">Factory</a><a href="#industries">Industries</a><a href="#contact">Contact</a></div>
+  <a class="btn" href="#contact">Get a quote</a>
+</div></nav>
+
+<header class="hero band" id="top"><svg class="scene" id="scene" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<defs><radialGradient id="glow" cx="72%" cy="78%" r="55%"><stop offset="0" stop-color="#d17a3d" stop-opacity=".55"/><stop offset=".45" stop-color="#d17a3d" stop-opacity=".12"/><stop offset="1" stop-color="#d17a3d" stop-opacity="0"/></radialGradient>
+<linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08191f" stop-opacity="0"/><stop offset=".55" stop-color="#08191f" stop-opacity=".2"/><stop offset="1" stop-color="#08191f" stop-opacity=".5"/></linearGradient><symbol id="py" viewBox="0 0 80 220"><g fill="none" stroke="#2f6371" stroke-width="2"><path d="M40 2 L22 218 M40 2 L58 218 M28 150 L52 150 M25 185 L55 185 M32 100 L48 100 M35 60 L45 60 M28 150 L48 100 L32 100 L52 150 M25 185 L52 150 M55 185 L28 150 M32 100 L45 60 M48 100 L35 60"/><path d="M6 40 L74 40 M12 72 L68 72 M6 40 L40 22 L74 40 M12 72 L36 58 M68 72 L44 58" stroke-width="2.4"/></g></symbol></defs>
+<rect width="1440" height="400" fill="url(#glow)"/>
+<path d="M0 300 C180 250 320 270 460 255 C640 236 760 280 940 262 C1120 244 1260 268 1440 240 V400 H0Z" fill="#123843"/>
+<use href="#py" x="110" y="180" width="80" height="220"/><use href="#py" x="490" y="215" width="60" height="165"/><use href="#py" x="856" y="240" width="48" height="132"/><use href="#py" x="1153" y="225" width="54" height="150"/><use href="#py" x="1356" y="200" width="68" height="187"/>
+<g fill="none" stroke="#d17a3d" stroke-width="1.6" opacity=".75"><path d="M116 220 Q305 283 494 245"/><path d="M184 220 Q365 283 546 245"/><path d="M122 252 Q310 307 499 269"/><path d="M178 252 Q360 307 541 269"/><path d="M494 245 Q677 302 860 264"/><path d="M546 245 Q723 302 900 264"/><path d="M499 269 Q681 321 863 283"/><path d="M541 269 Q719 321 897 283"/><path d="M860 264 Q1008 302 1157 252"/><path d="M900 264 Q1052 302 1203 252"/><path d="M863 283 Q1012 321 1161 274"/><path d="M897 283 Q1048 321 1199 274"/><path d="M1157 252 Q1259 290 1361 234"/><path d="M1203 252 Q1311 290 1419 234"/><path d="M1161 274 Q1264 312 1366 261"/><path d="M1199 274 Q1306 312 1414 261"/></g>
+<path d="M300 290 L300 262 L340 240 L340 262 L380 240 L380 262 L420 240 L420 262 L460 240 L460 262 L500 240 L500 262 L540 240 L540 262 L580 240 L580 262 L620 240 L620 262 L660 240 L660 290 Z" fill="#0f2f38"/>
+<rect x="300" y="288" width="360" height="62" fill="#0f2f38"/><rect x="590" y="170" width="22" height="80" fill="#0f2f38"/><rect x="586" y="164" width="30" height="10" fill="#174652"/>
+<rect x="940" y="300" width="200" height="50" fill="#0f2f38"/><rect x="940" y="286" width="200" height="16" fill="#123843"/>
+<rect x="330" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="330" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="356" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="356" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.25"/><rect x="382" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="382" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="408" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="408" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="434" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="434" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="460" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="460" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.25"/><rect x="486" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="486" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="512" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="512" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.25"/><rect x="538" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.25"/><rect x="538" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="564" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="564" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="590" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="590" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="616" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="616" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.9"/><rect x="642" y="300" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.25"/><rect x="642" y="322" width="14" height="9" rx="1" fill="#f0a46a" opacity="0.55"/><rect x="960" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="960" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.8"/><rect x="982" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.8"/><rect x="982" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="1004" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="1004" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.2"/><rect x="1026" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.2"/><rect x="1026" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="1048" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.8"/><rect x="1048" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.2"/><rect x="1070" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="1070" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.2"/><rect x="1092" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.4"/><rect x="1092" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.2"/><rect x="1114" y="318" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.8"/><rect x="1114" y="336" width="12" height="8" rx="1" fill="#f0a46a" opacity="0.8"/>
+<text x="480" y="282" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="800" font-size="15" fill="#f0a46a" opacity=".85" letter-spacing="1">ARKVOLT</text>
+<rect x="0" y="348" width="1440" height="52" fill="#0b2128"/>
+<g><circle cx="720" cy="352" r="30" fill="#4a3322"/><circle cx="720" cy="352" r="23" fill="#c8743a"/><circle cx="720" cy="352" r="19" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="720" cy="352" r="14" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="720" cy="352" r="7" fill="#2a1d13"/><circle cx="720" cy="352" r="2" fill="#0b1c22"/></g><g><circle cx="782" cy="358" r="24" fill="#4a3322"/><circle cx="782" cy="358" r="19" fill="#202426"/><circle cx="782" cy="358" r="15" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="782" cy="358" r="11" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="782" cy="358" r="5" fill="#2a1d13"/><circle cx="782" cy="358" r="2" fill="#0b1c22"/></g><g><circle cx="750" cy="316" r="24" fill="#4a3322"/><circle cx="750" cy="316" r="19" fill="#d8352a"/><circle cx="750" cy="316" r="15" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="750" cy="316" r="11" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="750" cy="316" r="5" fill="#2a1d13"/><circle cx="750" cy="316" r="2" fill="#0b1c22"/></g><g><circle cx="1250" cy="354" r="28" fill="#4a3322"/><circle cx="1250" cy="354" r="22" fill="#c8743a"/><circle cx="1250" cy="354" r="17" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="1250" cy="354" r="13" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="1250" cy="354" r="6" fill="#2a1d13"/><circle cx="1250" cy="354" r="2" fill="#0b1c22"/></g><g><circle cx="1306" cy="360" r="22" fill="#4a3322"/><circle cx="1306" cy="360" r="17" fill="#6f7c81"/><circle cx="1306" cy="360" r="14" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="1306" cy="360" r="10" fill="none" stroke="#00000040" stroke-width="2"/><circle cx="1306" cy="360" r="5" fill="#2a1d13"/><circle cx="1306" cy="360" r="2" fill="#0b1c22"/></g>
+<rect width="1440" height="400" fill="url(#fade)"/>
+</svg><div class="wrap">
+  <div>
+    <h1>Cables built layer by layer, tested to the last metre.</h1>
+    <p class="lede">Power, control, solar and house wiring cables from our Greater Noida plant. Drag the cable to turn it, hover any layer to see what it does, and scroll to open it up.</p>
+    <div class="stage" id="stage"><div class="tip" id="tip"></div><div class="hint">Drag to rotate · Hover a layer · Scroll to separate</div></div>
+  </div>
+  <aside class="panel" aria-label="Cable explorer">
+    <h3>Pick a cable</h3>
+    <div class="tabs" id="tabs"></div>
+    <h3>Inside this cable</h3>
+    <ul class="lay" id="lay"></ul>
+    <p class="info" id="info"></p>
+  </aside>
+</div>
+<div class="wrap stats">
+  <div><strong>1,200+</strong><span>SKUs in production</span></div>
+  <div><strong>48,000 km</strong><span>cable shipped yearly</span></div>
+  <div><strong>1.1 to 33 kV</strong><span>voltage range</span></div>
+  <div><strong>100%</strong><span>drums spark and HV tested</span></div>
+</div>
+</header>
+
+<section class="band" id="products"><div class="wrap">
+  <div class="head"><h2>Product range</h2><p>Every family is made in-house from 8 mm copper rod to finished drum. Tap “View in 3D” to load it into the cable explorer above.</p></div>
+  <div class="prods" id="prods"></div>
+</div></section>
+
+<section class="band" id="sizing" style="padding-top:0"><div class="wrap">
+  <div class="head"><h2>What size cable do you need?</h2><p>Enter your load and run length. We pick the smallest copper size that carries the current and keeps voltage drop under 3%.</p></div>
+  <div class="calc">
+    <div class="box">
+      <div class="field"><label for="kw">Connected load <output id="kwO"></output></label><input type="range" id="kw" min="1" max="250" value="45"></div>
+      <div class="field"><label for="len">Cable run length <output id="lenO"></output></label><input type="range" id="len" min="5" max="500" step="5" value="120"></div>
+      <div class="field"><label>Supply</label><div class="seg" id="sup"><button data-v="1" aria-pressed="false">Single phase 230 V</button><button data-v="3" aria-pressed="true">Three phase 415 V</button></div></div>
+      <div class="field"><label>Laid in</label><div class="seg" id="lay2"><button data-v="1" aria-pressed="true">Air / tray</button><button data-v="0.87" aria-pressed="false">Buried ground</button></div></div>
+    </div>
+    <div class="box res" aria-live="polite">
+      <span style="color:#bcd0d5">Recommended copper size</span>
+      <div class="big" id="sz"></div>
+      <div id="spec" style="font-weight:600;font-size:17px"></div>
+      <div class="rows">
+        <div class="row"><span>Full load current</span><b id="cur"></b></div>
+        <div class="row"><span>Cable rating, derated</span><b id="rat"></b></div>
+        <div class="row"><span>Voltage drop</span><b id="vd"></b></div>
+      </div>
+      <div><div class="meter"><i id="vdm"></i></div><p class="note" style="margin-top:6px">Bar fills at the 3% voltage drop limit.</p></div>
+      <p class="note">Indicative sizing for Cu XLPE cable at 0.85 power factor. Our engineers confirm every order against site conditions.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band fact" id="factory"><div class="wrap">
+  <div class="head"><h2>From copper rod to finished drum</h2><p>Seven stages, one roof. Step through the line and watch the drum fill.</p></div>
+  <div class="fgrid">
+    <div class="drum" id="drum"></div>
+    <div>
+      <div class="steps" id="steps" tabindex="0" aria-label="Factory steps"></div>
+      <div class="ctrl"><button class="btn" id="prev" aria-label="Previous step">←</button><button class="btn" id="next" aria-label="Next step">→</button><span id="cnt"></span></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="band" id="industries"><div class="wrap">
+  <div class="head"><h2>Where our cable runs</h2><p>Designed to Indian Standards IS 694, IS 1554 and IS 7098, with type tests on every new design.</p></div>
+  <div class="inds">
+    <div class="ind"><h3>Real estate</h3><p>FR-LSH house wire and LT armoured feeders for towers, villas and malls.</p></div>
+    <div class="ind"><h3>Solar parks</h3><p>UV-stable DC cable with tinned copper for rooftop and utility plants.</p></div>
+    <div class="ind"><h3>Factories</h3><p>Control and instrumentation cable for panels, motors and PLC lines.</p></div>
+    <div class="ind"><h3>Power utilities</h3><p>HT XLPE cable for distribution networks up to 33 kV.</p></div>
+    <div class="ind"><h3>Infrastructure</h3><p>Metro, highway lighting and airport projects with fire-survival cable.</p></div>
+    <div class="ind"><h3>Dealers and OEMs</h3><p>Coils and drums in custom lengths, printed with your brand on request.</p></div>
+  </div>
+</div></section>
+
+<section class="band" id="contact" style="padding-top:0"><div class="wrap contact">
+  <div class="meta">
+    <h2>Get a quote within 24 hours</h2>
+    <p>Share the cable type, size and quantity. Our sales team replies with price, stock and dispatch date.</p>
+    <div><b>Plant and office</b>Plot 14, Ecotech Industrial Area, Greater Noida, Uttar Pradesh</div>
+    <div><b>Sales</b>sales@arkvolt.example · +91 120 400 0000</div>
+    <div><b>Hours</b>Mon to Sat, 9:30 to 18:30</div>
+  </div>
+  <div class="box">
+    <form id="form">
+      <input required placeholder="Your name" aria-label="Your name">
+      <input required type="tel" placeholder="Phone" aria-label="Phone">
+      <select class="full" aria-label="Cable type" id="ctype"><option>LT armoured power cable</option><option>Solar DC cable</option><option>Control cable</option><option>House wire</option></select>
+      <input placeholder="Size, e.g. 4C × 25 mm²" aria-label="Size" id="csize">
+      <input placeholder="Quantity in metres" aria-label="Quantity" inputmode="numeric">
+      <textarea class="full" placeholder="Project details" aria-label="Project details"></textarea>
+      <button class="btn full" type="submit">Request quote</button>
+      <p class="ok full" id="ok">Thanks. This is a demo page, so nothing was sent, but on the live site your request would go straight to the sales team.</p>
+    </form>
+  </div>
+</div></section>
+
+<footer class="band"><div class="wrap">
+  <span>© 2026 Arkvolt Cables Pvt Ltd</span>
+  <span>Demo website for a fictional company. Names, figures and contact details are sample content.</span>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+{
+const T=window.THREE, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COL={red:0xd8352a,yel:0xe8c22a,blu:0x2f63c9,blk:0x202426,gry:0x8b9599,wht:0xe9ece8,org:0xe07a28};
+const TYPES={
+ power:{name:'LT armoured',cores:4,coreR:.34,colors:[COL.red,COL.yel,COL.blu,COL.blk],strands:7,cu:0xc8743a,inner:true,armour:true,sheath:COL.blk,
+  sum:'4 core, Cu XLPE, steel wire armoured, PVC sheath',tag:'1.1 kV · 1.5 to 400 mm²',use:'Building feeders and industrial mains'},
+ solar:{name:'Solar DC',cores:1,coreR:.62,colors:[COL.wht],strands:19,cu:0xc9ccd0,inner:false,armour:false,sheath:COL.red,
+  sum:'Single core, tinned copper, XLPO insulation, UV stable sheath',tag:'1.5 kV DC · 4 to 16 mm²',use:'Rooftop and utility solar strings'},
+ control:{name:'Control',cores:7,coreR:.24,colors:[COL.gry,COL.gry,COL.gry,COL.gry,COL.gry,COL.gry,COL.gry],strands:7,cu:0xc8743a,inner:true,armour:false,sheath:COL.gry,
+  sum:'Multi core, numbered cores, PVC insulated and sheathed',tag:'1.1 kV · 2 to 61 cores',use:'Panels, motors and PLC wiring'},
+ house:{name:'House wire',cores:1,coreR:.6,colors:[COL.red],strands:19,cu:0xc8743a,inner:false,armour:false,sheath:null,
+  sum:'Single core, fine copper strands, FR-LSH PVC insulation',tag:'1.1 kV · 0.75 to 6 mm²',use:'Home and office circuits'}
+};
+const DESC={cu:['Copper conductor','Annealed electrolytic copper, 99.97% pure, stranded so the cable bends without cracking.'],
+ ins:['Insulation','Cross-linked insulation keeps each core apart and holds rated voltage at 90 °C.'],
+ inner:['Inner sheath and filler','Extruded bedding that rounds the core bundle and protects it from the armour wires.'],
+ arm:['Steel wire armour','Galvanised steel wires wound in a helix for crush strength and earth continuity.'],
+ sh:['Outer sheath','Tough PVC jacket against water, sunlight, termites and abrasion, printed with size and metre marks.']};
+const SW={cu:'#d17a3d',ins:'#d8352a',inner:'#7d8a8f',arm:'#b9c2c6',sh:'#202426'};
+
+function mk(el,fov){
+  const r=new T.WebGLRenderer({antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));el.appendChild(r.domElement);
+  const s=new T.Scene(),c=new T.PerspectiveCamera(fov,1,.1,100);
+  s.add(new T.HemisphereLight(0xdff3ff,0x0d2a33,.75));
+  const d=new T.DirectionalLight(0xffffff,1.1);d.position.set(4,6,8);s.add(d);
+  const p=new T.PointLight(0xf0a46a,1.4,30);p.position.set(-6,-2,5);s.add(p);
+  const fit=()=>{const w=el.clientWidth,h=el.clientHeight;r.setSize(w,h,false);c.aspect=w/h;c.updateProjectionMatrix();el._fit&&el._fit(w,h)};
+  const ro=new ResizeObserver(fit);ro.observe(el);fit();
+  return{r,s,c,el};
+}
+function cyl(rad,x0,x1,mat){const g=new T.CylinderGeometry(rad,rad,x1-x0,48);g.rotateZ(Math.PI/2);const m=new T.Mesh(g,mat);m.position.x=(x0+x1)/2;return m}
+const std=(color,metal=0,rough=.55)=>new T.MeshStandardMaterial({color,metalness:metal,roughness:rough});
+class Helix extends T.Curve{constructor(R,ph,x0,x1,turns){super();Object.assign(this,{R,ph,x0,x1,turns})}
+ getPoint(t,o=new T.Vector3()){const a=this.ph+t*this.turns*Math.PI*2;return o.set(this.x0+(this.x1-this.x0)*t,Math.cos(a)*this.R,Math.sin(a)*this.R)}}
+
+/* hero scene */
+const stage=document.getElementById('stage'),H=mk(stage,32);
+const pivot=new T.Group();H.s.add(pivot);
+let cable=null,layers=[],cur='power',sel=null,explode=0,yaw=-.5,pitch=.3,spin=0;
+stage._fit=(w,h)=>{const a=w/h;H.c.position.set(0,0,a<1?15:a<1.4?13:11);pivot.position.set(a<1?0:.4,a<1?-.3:.2,0);pivot.scale.setScalar(a<1?.62:1)};stage._fit(stage.clientWidth,stage.clientHeight);
+
+function build(key){
+  const t=TYPES[key];if(cable){pivot.remove(cable);cable.traverse(o=>{o.geometry&&o.geometry.dispose();o.material&&o.material.dispose()})}
+  cable=new T.Group();layers=[];pivot.add(cable);
+  const L=k=>{const g=new T.Group();g.userData.key=k;cable.add(g);layers.push({k,g});return g};
+  const X0=-3.8,n=t.cores,ring=n==1?0:n==7?t.coreR*2.05:t.coreR*1.45;
+  const pos=[];if(n==7){pos.push([0,0]);for(let i=0;i<6;i++)pos.push([Math.cos(i*Math.PI/3)*ring,Math.sin(i*Math.PI/3)*ring])}
+  else for(let i=0;i<n;i++)pos.push(n==1?[0,0]:[Math.cos(i*2*Math.PI/n+Math.PI/4)*ring,Math.sin(i*2*Math.PI/n+Math.PI/4)*ring]);
+  const cu=L('cu'),ins=L('ins'),cuM=std(t.cu,.95,.28);
+  pos.forEach(([y,z],i)=>{
+    const sr=t.strands==19?t.coreR*.17:t.coreR*.27,pts=[[0,0]];
+    const rings=t.strands==19?[[6,2],[12,4]]:[[6,2]];
+    rings.forEach(([c,m])=>{for(let j=0;j<c;j++){const a=j*2*Math.PI/c;pts.push([Math.cos(a)*sr*m*.98,Math.sin(a)*sr*m*.98])}});
+    pts.forEach(([a,b])=>{const m=cyl(sr*.97,X0,3.5,cuM);m.position.y=y+a;m.position.z=z+b;cu.add(m)});
+    const im=cyl(t.coreR,X0,2.55,std(t.colors[i],.05,.45));im.position.y=y;im.position.z=z;ins.add(im);
+  });
+  let R=ring+t.coreR;
+  if(t.inner){R+=.07;L('inner').add(cyl(R,X0,1.7,std(0x6f7c81,0,.8)))}
+  if(t.armour){const g=L('arm'),m=std(0xb9c2c6,.9,.32),wr=.065,AR=R+wr,cnt=Math.floor(2*Math.PI*AR/(wr*2.05));
+    for(let i=0;i<cnt;i++)g.add(new T.Mesh(new T.TubeGeometry(new Helix(AR,i*2*Math.PI/cnt,X0,.95,1.4),90,wr,6),m));R=AR+wr}
+  if(t.sheath!=null){L('sh').add(cyl(R+.1,X0,.2,std(t.sheath,.05,.5)))}
+  layers.reverse();
+  renderLayers();select(null);
+}
+function renderLayers(){
+  document.getElementById('lay').innerHTML=layers.map(l=>`<li><button data-k="${l.k}" aria-pressed="${sel==l.k}"><span class="sw" style="background:${l.k=='ins'?'#'+TYPES[cur].colors[0].toString(16).padStart(6,'0'):l.k=='sh'?'#'+TYPES[cur].sheath.toString(16).padStart(6,'0'):SW[l.k]}"></span>${DESC[l.k][0]}</button></li>`).join('');
+}
+function select(k){
+  sel=k;layers.forEach(l=>l.g.traverse(o=>{if(o.material){o.material.transparent=!!k&&l.k!=k;o.material.opacity=k&&l.k!=k?.16:1;o.material.emissive&&o.material.emissive.setHex(k==l.k?0x3a1a05:0)}}));
+  document.querySelectorAll('#lay button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k==k));
+  const t=TYPES[cur],info=document.getElementById('info');
+  info.innerHTML=k?`<b>${DESC[k][0]}</b>${DESC[k][1]}`:`<b>${t.name} cable</b>${t.sum}. ${t.use}.`;
+}
+document.getElementById('lay').addEventListener('click',e=>{const b=e.target.closest('button');if(b)select(sel==b.dataset.k?null:b.dataset.k)});
+function setType(k){cur=k;build(k);document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k==k))}
+document.getElementById('tabs').innerHTML=Object.entries(TYPES).map(([k,t])=>`<button data-k="${k}" aria-pressed="false">${t.name}</button>`).join('');
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setType(b.dataset.k)});
+
+/* drag, hover, click */
+const ray=new T.Raycaster(),mp=new T.Vector2(),tip=document.getElementById('tip');
+let drag=null,moved=0;
+stage.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw,pitch};moved=0;stage.setPointerCapture(e.pointerId)});
+stage.addEventListener('pointermove',e=>{
+  const r=stage.getBoundingClientRect();
+  if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved=Math.abs(dx)+Math.abs(dy);yaw=drag.yaw+dx*.008;pitch=Math.max(-1.2,Math.min(1.2,drag.pitch+dy*.006));tip.style.opacity=0;return}
+  mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,H.c);
+  const hit=ray.intersectObjects(cable.children,true)[0];let k=null,o=hit&&hit.object;while(o&&!k){k=o.userData.key;o=o.parent}
+  stage._hover=k;if(k){tip.textContent=DESC[k][0];tip.style.left=e.clientX-r.left+'px';tip.style.top=e.clientY-r.top+'px';tip.style.opacity=1}else tip.style.opacity=0;
+});
+stage.addEventListener('pointerup',e=>{if(drag&&moved<6){const r=stage.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mp,H.c);
+  const hit=ray.intersectObjects(cable.children,true)[0];let k=null,o=hit&&hit.object;while(o&&!k){k=o.userData.key;o=o.parent}select(k&&k!=sel?k:null)}drag=null});
+stage.addEventListener('pointerleave',()=>{tip.style.opacity=0});
+
+/* scroll opens the cable */
+const hero=document.getElementById('top');
+addEventListener('scroll',()=>{const h=hero.offsetHeight;explode=Math.max(0,Math.min(1,scrollY/(h*.7)))},{passive:true});
+
+/* products */
+const prodSvg=k=>{const t=TYPES[k],hx=c=>'#'+c.toString(16).padStart(6,'0');let s=`<svg viewBox="0 0 240 110" aria-hidden="true">`;
+  if(t.sheath!=null)s+=`<rect x="0" y="27" width="110" height="56" rx="28" fill="${hx(t.sheath)}"/>`;
+  if(t.armour)s+=`<rect x="70" y="31" width="70" height="48" rx="24" fill="#b9c2c6"/>`;
+  if(t.inner)s+=`<rect x="100" y="34" width="60" height="42" rx="21" fill="#6f7c81"/>`;
+  s+=`<rect x="${t.sheath==null?20:(t.inner?130:96)}" y="${t.cores==1?33:39}" width="${t.sheath==null?150:60}" height="${t.cores==1?44:32}" rx="16" fill="${hx(t.colors[0])}"/>`;
+  s+=`<rect x="${t.sheath==null?160:180}" y="${t.cores==1?42:45}" width="${t.sheath==null?70:55}" height="${t.cores==1?26:20}" rx="10" fill="${hx(t.cu)}"/></svg>`;return s};
+document.getElementById('prods').innerHTML=Object.entries(TYPES).map(([k,t])=>`<article class="prod">${prodSvg(k)}<h3>${t.name} cable</h3><p>${t.sum}.</p>
+  <dl><dt>Range</dt><dd>${t.tag}</dd><dt>Best for</dt><dd style="white-space:normal">${t.use}</dd></dl>
+  <button class="btn ghost" data-k="${k}">View in 3D</button></article>`).join('');
+document.getElementById('prods').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setType(b.dataset.k);scrollTo({top:0,behavior:reduce?'auto':'smooth'})});
+
+/* sizing calculator */
+const AMP=[[1.5,20],[2.5,27],[4,36],[6,46],[10,63],[16,85],[25,112],[35,138],[50,168],[70,213],[95,258],[120,299],[150,344],[185,392],[240,461],[300,530],[400,610]];
+let ph=3,fac=1;
+const $=id=>document.getElementById(id);
+function calc(){
+  const kw=+$('kw').value,L=+$('len').value;$('kwO').textContent=kw+' kW';$('lenO').textContent=L+' m';
+  const V=ph==3?415:230,I=ph==3?kw*1000/(Math.sqrt(3)*V*.85):kw*1000/(V*.85);
+  let pick=null,vdp=0;
+  for(const [a,amp] of AMP){const vd=(ph==3?Math.sqrt(3):2)*L*I*.0225*.85/a,p=vd/V*100;if(amp*fac>=I&&p<=3){pick=[a,amp];vdp=p;break}}
+  if(!pick){$('sz').innerHTML='Parallel';$('spec').textContent='Load needs parallel runs or HT supply. Talk to our engineers.';$('rat').textContent='-';$('vd').textContent='over 3%';$('vdm').style.width='100%'}
+  else{$('sz').innerHTML=pick[0]+'<small>mm²</small>';$('spec').textContent=`${ph==3?'3.5C':'2C'} × ${pick[0]} mm² Cu XLPE ${fac<1?'armoured':'armoured or unarmoured'}`;
+    $('rat').textContent=Math.round(pick[1]*fac)+' A';$('vd').textContent=vdp.toFixed(2)+'%';$('vdm').style.width=Math.min(100,vdp/3*100)+'%'}
+  $('cur').textContent=I.toFixed(1)+' A';
+}
+const seg=(id,fn)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$(id).querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x==b));fn(+b.dataset.v);calc()});
+seg('sup',v=>ph=v);seg('lay2',v=>fac=v);$('kw').oninput=calc;$('len').oninput=calc;calc();
+
+/* factory drum */
+const STEPS=[['Wire drawing','8 mm copper rod is drawn down through diamond dies to the exact strand diameter.'],
+ ['Annealing','Drawn wire is heated in a nitrogen atmosphere so it turns soft, bendable and bright.'],
+ ['Stranding','Strands are laid up in precise layers on a rigid strander to form the conductor.'],
+ ['Insulation','XLPE or PVC is extruded over each conductor and checked by a spark tester inline.'],
+ ['Laying and armouring','Cores are laid up, bedded and wound with galvanised steel wire armour.'],
+ ['Outer sheathing','The final jacket is extruded and printed with size, voltage and metre marks.'],
+ ['Testing and drum','Every drum passes conductor resistance, HV and insulation resistance tests before dispatch.']];
+$('steps').innerHTML=STEPS.map((s,i)=>`<article class="step" data-i="${i}"><span class="n">Stage ${i+1} of 7</span><h3>${s[0]}</h3><p>${s[1]}</p></article>`).join('');
+const drumEl=$('drum'),D=mk(drumEl,34);D.c.position.set(0,1.8,9);D.c.lookAt(0,0,0);
+const drum=new T.Group();D.s.add(drum);drum.rotation.y=-1.1;
+const wood=std(0x6b4526,0,.9),fl=new T.CylinderGeometry(2.1,2.1,.16,64);fl.rotateX(Math.PI/2);
+[-1,1].forEach(s=>{const m=new T.Mesh(fl,wood);m.position.z=s*1.05;drum.add(m);
+  const hb=new T.Mesh(new T.CylinderGeometry(.35,.35,.2,32).rotateX(Math.PI/2),std(0x2a3a40,.6,.4));hb.position.z=s*1.17;drum.add(hb)});
+drum.add(new T.Mesh(new T.CylinderGeometry(.8,.8,2,48).rotateX(Math.PI/2),std(0x7a5430,0,.8)));
+const wraps=[],wm=std(0x202426,.1,.45),tg=new T.TorusGeometry(1,.1,10,64);
+for(let l=0;l<7;l++)for(let k=0;k<10;k++){const m=new T.Mesh(tg,wm);const r=.9+l*.19;m.scale.set(r,r,1);m.position.z=-.9+k*.2;m.visible=false;drum.add(m);wraps.push(m)}
+let step=0,dYaw=-1.1,dDrag=null;
+function setStep(i){step=Math.max(0,Math.min(6,i));document.querySelectorAll('.step').forEach((s,j)=>s.classList.toggle('on',j==step));
+  $('cnt').textContent=`Stage ${step+1} of 7: ${STEPS[step][0]}`;const show=Math.round((step+1)/7*wraps.length);wraps.forEach((w,j)=>w.visible=j<show);
+  wm.color.setHex(step<3?0xc8743a:step<5?0x6f7c81:0x202426);wm.metalness=step<3?.9:.1}
+const go=i=>{setStep(i);const el=document.querySelectorAll('.step')[step];$('steps').scrollTo({left:el.offsetLeft-$('steps').offsetLeft,behavior:reduce?'auto':'smooth'})};
+$('prev').onclick=()=>go(step-1);$('next').onclick=()=>go(step+1);
+$('steps').addEventListener('keydown',e=>{if(e.key=='ArrowRight'){e.preventDefault();go(step+1)}if(e.key=='ArrowLeft'){e.preventDefault();go(step-1)}});
+$('steps').addEventListener('click',e=>{const s=e.target.closest('.step');if(s)go(+s.dataset.i)});
+let st;$('steps').addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{const sc=$('steps'),w=sc.querySelector('.step').offsetWidth+14;const i=Math.round(sc.scrollLeft/w);if(i!=step)setStep(sc.scrollLeft+sc.clientWidth>=sc.scrollWidth-4?6:i)},90)},{passive:true});
+drumEl.addEventListener('pointerdown',e=>{dDrag={x:e.clientX,y:dYaw};drumEl.setPointerCapture(e.pointerId)});
+drumEl.addEventListener('pointermove',e=>{if(dDrag)dYaw=dDrag.y+(e.clientX-dDrag.x)*.01});
+drumEl.addEventListener('pointerup',()=>dDrag=null);
+setStep(0);
+
+/* form */
+$('form').addEventListener('submit',e=>{e.preventDefault();$('ok').style.display='block'});
+
+/* animate */
+let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
+let ex=0;const sceneEl=document.getElementById('scene');
+const placeScene=()=>{const hb=hero.getBoundingClientRect(),sb=stage.getBoundingClientRect();sceneEl.style.bottom=Math.max(0,hb.bottom-sb.bottom-6)+'px'};const sro=new ResizeObserver(placeScene);sro.observe(hero);placeScene();
+function loop(){
+  ex+=(explode-ex)*.08;
+  if(!reduce&&!drag)spin+=.004;
+  pivot.rotation.y=yaw+(drag?0:mx*.15);pivot.rotation.x=pitch+(drag?0:my*.1);
+  if(cable){cable.rotation.x=spin;const N=layers.length;layers.forEach((l,i)=>{l.g.position.x=-(i)*ex*1.1+(N-1)*ex*.55})}
+  sceneEl.style.transform=`translate3d(${(-mx*18).toFixed(1)}px,${(ex*30).toFixed(1)}px,0)`;
+  H.r.render(H.s,H.c);
+  if(!reduce&&!dDrag)drum.rotation.z-=.006;drum.rotation.y+=(dYaw-drum.rotation.y)*.1;
+  D.r.render(D.s,D.c);
+  requestAnimationFrame(loop);
+}
+setType('power');loop();
+}
+</script>
+</body>
+</html>
